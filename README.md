@@ -155,13 +155,6 @@ These are not proxyable by design -- at least without further ado -- and are fil
 | SCRAM-*-PLUS             | not supported (due to channel binding) |
 | Others                   | not supported (yet)                    |
 
-# Current purpose
-
-Proxies are a great way to challenge the usability of a network library such as `imap-next`.
-To implement a proxy, it's required to implement both the server- and client-side, and the tasks require designing the library in a way that allows even fine-grained forwarding.
-Further, a usable proxy would significantly extend the exposure of `imap-codec` to real-world network traces.
-It should be possible to permanently stick the proxy between real-world IMAP sessions, e.g., to track day-to-day email sessions (and ask other contributors to conduct the same test.)
-
 # Future work
 
 The proxy could enrich existing clients' functionality to improve compatibility, performance, and security.
