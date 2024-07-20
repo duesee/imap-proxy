@@ -1,5 +1,22 @@
 # IMAP Proxy
 
+```mermaid
+%%{init: {'theme': 'neutral' } }%%
+flowchart LR
+    imap-types --> imap-codec
+    imap-codec --> imap-next
+    imap-next --> imap-proxy
+    
+    style imap-codec stroke-dasharray: 10 5
+    style imap-next stroke-dasharray: 10 5
+    style imap-proxy stroke-width:4px
+    
+    click imap-types href "https://github.com/duesee/imap-codec/tree/main/imap-types"
+    click imap-codec href "https://github.com/duesee/imap-codec"
+    click imap-next href "https://github.com/duesee/imap-next"
+    click imap-proxy href "https://github.com/duesee/imap-proxy"
+```
+
 A proxy that receives, `Debug`-prints, and forwards IMAP messages.
 
 It should™ forward all messages *without changing their semantics*. (See note below.)
