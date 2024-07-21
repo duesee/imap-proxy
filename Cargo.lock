@@ -353,7 +353,7 @@ dependencies = [
 [[package]]
 name = "imap-next"
 version = "0.2.0"
-source = "git+https://github.com/duesee/imap-next#93025af1362f7cff051e103d69881311e9c20c07"
+source = "git+https://github.com/duesee/imap-next?rev=93025af1362f7cff051e103d69881311e9c20c07#93025af1362f7cff051e103d69881311e9c20c07"
 dependencies = [
  "bytes",
  "imap-codec",
