@@ -1,3 +1,6 @@
+[![main](https://github.com/duesee/imap-proxy/actions/workflows/main.yml/badge.svg)](https://github.com/duesee/imap-proxy/actions/workflows/main.yml)
+[![audit](https://github.com/duesee/imap-proxy/actions/workflows/audit.yml/badge.svg)](https://github.com/duesee/imap-proxy/actions/workflows/audit.yml)
+
 # IMAP Proxy
 
 A proxy that receives, `Debug`-prints, and forwards IMAP messages *without changing their semantics* (but see note below).
