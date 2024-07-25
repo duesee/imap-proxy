@@ -1,6 +1,5 @@
 use std::{net::SocketAddr, sync::Arc};
 
-use byte_string::ByteStr;
 use colored::{Color, ColoredString, Colorize};
 use imap_codec::fragmentizer::{FragmentInfo, Fragmentizer};
 use imap_next::{
@@ -9,6 +8,7 @@ use imap_next::{
         command::{Command, CommandBody},
         extensions::idle::IdleDone,
         response::{Code, Greeting, Status},
+        utils::escape_byte_string,
         ToStatic,
     },
     server::{self, Server},
@@ -627,20 +627,20 @@ fn handle_fragment_event(
     fragmentizer: &Fragmentizer,
     fragment_info: FragmentInfo,
 ) {
-    let fragment_bytes = fragmentizer.fragment_bytes(fragment_info);
+    let fragment_bytes = || escape_byte_string(fragmentizer.fragment_bytes(fragment_info));
 
     match fragment_info {
         FragmentInfo::Line { .. } => {
             trace!(
                 role,
-                line=%maybe_color(format!("{:?}", ByteStr::new(fragment_bytes)), color),
+                line=%maybe_color(format!("{:?}", fragment_bytes()), color),
                 "{direction}"
             );
         }
         FragmentInfo::Literal { .. } => {
             trace!(
                 role,
-                literal=%maybe_color(format!("{:?}", ByteStr::new(fragment_bytes)), color),
+                literal=%maybe_color(format!("{:?}", fragment_bytes()), color),
                 "{direction}"
             );
         }

@@ -8,7 +8,6 @@ publish = false
 [dependencies]
 anyhow = "1.0.86"
 argh = "0.1.12"
-byte_string = "1.0.0"
 colored = "2.1.0"
 imap-codec = "2.0.0-alpha.4"
 imap-next = { version = "0.2.0", features = ["ext_id"] }
