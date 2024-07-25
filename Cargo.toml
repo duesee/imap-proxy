@@ -9,16 +9,13 @@ publish = false
 anyhow = "1.0.86"
 argh = "0.1.12"
 colored = "2.1.0"
-# TODO(8): Forward features through `imap-next` (as soon as forwarding is available) 
-imap-codec = { version = "2.0.0-alpha.2", features = ["quirk_crlf_relaxed", "ext_id"] }
-# TODO(7): Use `imap-next` from crates.io
-imap-next = { git = "https://github.com/duesee/imap-next", rev = "93025af1362f7cff051e103d69881311e9c20c07" }
+imap-next = { version = "0.2.0", features = ["ext_id"] }
 once_cell = "1.19.0"
 rustls-native-certs = "0.7.1"
 rustls-pemfile = "2.1.2"
 serde = { version = "1.0.204", features = ["derive"] }
 thiserror = "1.0.62"
-tokio = { version = "1.38", features = ["full"] }
+tokio = { version = "1.39", features = ["full"] }
 tokio-rustls = "0.26.0"
 toml = "0.8.14"
 tracing = "0.1.40"
