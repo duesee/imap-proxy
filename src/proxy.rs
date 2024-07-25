@@ -198,8 +198,9 @@ impl Proxy<ConnectedState> {
         let mut proxy_to_server = {
             // TODO(#144): Read options from config
             let options = client::Options::default();
+            let max_input_size = options.max_response_size;
             let client = Client::new(options);
-            ImapState::client(client)
+            ImapState::client(client, max_input_size)
         };
         let mut proxy_to_server_stream = self.state.proxy_to_server;
         let stream_event = proxy_to_server_stream.next(&mut proxy_to_server).await;
@@ -221,8 +222,9 @@ impl Proxy<ConnectedState> {
             options
                 .set_literal_reject_text(LITERAL_REJECT_TEXT.to_string())
                 .unwrap();
+            let max_input_size = options.max_command_size;
             let server = Server::new(options, greeting);
-            ImapState::server(server)
+            ImapState::server(server, max_input_size)
         };
         let mut client_to_proxy_stream = self.state.client_to_proxy;
 
@@ -549,12 +551,12 @@ struct ImapState<S> {
 }
 
 impl ImapState<Client> {
-    pub fn client(state: Client) -> Self {
+    pub fn client(state: Client, max_input_size: u32) -> Self {
         Self {
             input_role: "s2p",
             input_direction: "<--|",
             input_color: Some(Color::Blue),
-            input_fragmentizer: Fragmentizer::without_max_message_size(),
+            input_fragmentizer: Fragmentizer::new(max_input_size),
             output_role: "p2s",
             output_direction: "--->",
             output_color: None,
@@ -565,12 +567,12 @@ impl ImapState<Client> {
 }
 
 impl ImapState<Server> {
-    pub fn server(state: Server) -> Self {
+    pub fn server(state: Server, max_input_size: u32) -> Self {
         Self {
             input_role: "c2p",
             input_direction: "|-->",
             input_color: Some(Color::Red),
-            input_fragmentizer: Fragmentizer::without_max_message_size(),
+            input_fragmentizer: Fragmentizer::new(max_input_size),
             output_role: "p2c",
             output_direction: "<---",
             output_color: None,
@@ -628,12 +630,14 @@ fn handle_fragment_event(
     fragment_info: FragmentInfo,
 ) {
     let fragment_bytes = || escape_byte_string(fragmentizer.fragment_bytes(fragment_info));
+    let exceeded = || fragmentizer.is_max_message_size_exceeded();
 
     match fragment_info {
         FragmentInfo::Line { .. } => {
             trace!(
                 role,
                 line=%maybe_color(format!("{:?}", fragment_bytes()), color),
+                exceeded=%exceeded(),
                 "{direction}"
             );
         }
@@ -641,6 +645,7 @@ fn handle_fragment_event(
             trace!(
                 role,
                 literal=%maybe_color(format!("{:?}", fragment_bytes()), color),
+                exceeded=%exceeded(),
                 "{direction}"
             );
         }
