@@ -1,0 +1,48 @@
+name: main
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "**.rs"
+      - "**.toml"
+      - ".github/workflows/**"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "**.rs"
+      - "**.toml"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/cache_restore
+      - run: cargo install just
+      - run: just check
+      - uses: ./.github/actions/cache_save
+
+  test:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup | Install NASM (Windows)
+        uses: ilammy/setup-nasm@v1
+        if: matrix.os == 'windows-latest'
+
+      - uses: ./.github/actions/cache_restore
+      - run: cargo install just
+      - run: just test
+      - uses: ./.github/actions/cache_save
+
