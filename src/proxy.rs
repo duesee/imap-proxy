@@ -541,11 +541,10 @@ fn handle_server_event(
 struct ImapState<S> {
     input_role: &'static str,
     input_direction: &'static str,
-    input_color: Option<Color>,
+    input_color: Color,
     input_fragmentizer: Fragmentizer,
     output_role: &'static str,
     output_direction: &'static str,
-    output_color: Option<Color>,
     output_fragmentizer: Fragmentizer,
     state: S,
 }
@@ -555,11 +554,10 @@ impl ImapState<Client> {
         Self {
             input_role: "s2p",
             input_direction: "<--|",
-            input_color: Some(Color::Blue),
+            input_color: Color::Blue,
             input_fragmentizer: Fragmentizer::new(max_input_size),
             output_role: "p2s",
             output_direction: "--->",
-            output_color: None,
             output_fragmentizer: Fragmentizer::without_max_message_size(),
             state,
         }
@@ -571,11 +569,10 @@ impl ImapState<Server> {
         Self {
             input_role: "c2p",
             input_direction: "|-->",
-            input_color: Some(Color::Red),
+            input_color: Color::Red,
             input_fragmentizer: Fragmentizer::new(max_input_size),
             output_role: "p2c",
             output_direction: "<---",
-            output_color: None,
             output_fragmentizer: Fragmentizer::without_max_message_size(),
             state,
         }
@@ -592,7 +589,7 @@ impl<S: imap_next::State> imap_next::State for ImapState<S> {
             handle_fragment_event(
                 self.input_role,
                 self.input_direction,
-                self.input_color,
+                Some(self.input_color),
                 &self.input_fragmentizer,
                 fragment_info,
             );
@@ -610,7 +607,7 @@ impl<S: imap_next::State> imap_next::State for ImapState<S> {
                 handle_fragment_event(
                     self.output_role,
                     self.output_direction,
-                    self.output_color,
+                    None,
                     &self.output_fragmentizer,
                     fragment_info,
                 );
