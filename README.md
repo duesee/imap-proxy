@@ -44,6 +44,14 @@ RUST_LOG=proxy=trace cargo run
 
 ... to start the proxy (using the default `config.toml`), enabling all log messages for the "proxy" module.
 
+You should probably experiment with the environment variable. For example, you can use ...
+
+```sh
+RUST_LOG=trace cargo run
+```
+
+... to enable logs from lower libraries. This way, you will get TLS events and `io/{read,write}/raw` events.
+
 ```mermaid  
 graph LR;
 	Client -->|"① parse Command"| Proxy;
