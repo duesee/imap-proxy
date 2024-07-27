@@ -372,6 +372,7 @@ dependencies = [
  "anyhow",
  "argh",
  "colored",
+ "imap-codec",
  "imap-next",
  "once_cell",
  "rustls-native-certs",
