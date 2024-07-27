@@ -200,7 +200,7 @@ impl Proxy<ConnectedState> {
             let options = client::Options::default();
             let max_input_size = options.max_response_size;
             let client = Client::new(options);
-            ImapState::client(client, max_input_size)
+            FragmentTracker::client(client, max_input_size)
         };
         let mut proxy_to_server_stream = self.state.proxy_to_server;
         let stream_event = proxy_to_server_stream.next(&mut proxy_to_server).await;
@@ -224,7 +224,7 @@ impl Proxy<ConnectedState> {
                 .unwrap();
             let max_input_size = options.max_command_size;
             let server = Server::new(options, greeting);
-            ImapState::server(server, max_input_size)
+            FragmentTracker::server(server, max_input_size)
         };
         let mut client_to_proxy_stream = self.state.client_to_proxy;
 
@@ -293,7 +293,7 @@ fn handle_initial_server_event(
 #[instrument(name = "event", fields(layer = LAYER_MESSAGE), skip_all)]
 fn handle_client_event(
     client_event: Result<server::Event, server::Error>,
-    proxy_to_server: &mut ImapState<Client>,
+    proxy_to_server: &mut FragmentTracker<Client>,
 ) {
     let event = match client_event {
         Ok(event) => event,
@@ -380,7 +380,7 @@ fn handle_client_event(
 #[instrument(name = "event", fields(layer = LAYER_MESSAGE), skip_all)]
 fn handle_server_event(
     server_event: Result<client::Event, client::Error>,
-    client_to_proxy: &mut ImapState<Server>,
+    client_to_proxy: &mut FragmentTracker<Server>,
 ) {
     let event = match server_event {
         Ok(event) => event,
@@ -538,7 +538,7 @@ fn handle_server_event(
     }
 }
 
-struct ImapState<S> {
+struct FragmentTracker<S> {
     input_role: &'static str,
     input_direction: &'static str,
     input_color: Color,
@@ -549,7 +549,7 @@ struct ImapState<S> {
     state: S,
 }
 
-impl ImapState<Client> {
+impl FragmentTracker<Client> {
     pub fn client(state: Client, max_input_size: u32) -> Self {
         Self {
             input_role: "s2p",
@@ -564,7 +564,7 @@ impl ImapState<Client> {
     }
 }
 
-impl ImapState<Server> {
+impl FragmentTracker<Server> {
     pub fn server(state: Server, max_input_size: u32) -> Self {
         Self {
             input_role: "c2p",
@@ -579,7 +579,7 @@ impl ImapState<Server> {
     }
 }
 
-impl<S: imap_next::State> imap_next::State for ImapState<S> {
+impl<S: imap_next::State> imap_next::State for FragmentTracker<S> {
     type Event = S::Event;
     type Error = S::Error;
 
