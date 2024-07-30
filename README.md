@@ -26,11 +26,25 @@ Thanks to imap-next, the proxy takes advantage of asynchronous I/O, abstracts aw
 
 # Quickstart
 
+For now there is no officially released binary. You can install it via cargo ...
+
+```shell
+cargo install --git https://github.com/duesee/imap-proxy
+```
+
+.. and then run...
+
+```shell
+imap-proxy --help
+```
+
+... for an overview of arguments. But we suggest to run it directly via cargo ...
+
 ```shell
 cargo run -- --help
 ```
 
-... for an overview of arguments.
+... because it allows you to tinker with the source code.
 
 **Important**: You must enable tracing (logging) to see a `Debug`-print of exchanged messages.
 
