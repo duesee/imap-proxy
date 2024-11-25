@@ -12,10 +12,10 @@ colored = "2.1.0"
 imap-codec = "2.0.0-alpha.5"
 imap-next = { version = "0.3.0", features = ["ext_id"] }
 once_cell = "1.20.2"
-rustls-native-certs = "0.8.0"
+rustls-native-certs = "0.8.1"
 rustls-pemfile = "2.2.0"
 serde = { version = "1.0.215", features = ["derive"] }
-thiserror = "1.0.62"
+thiserror = "2.0.3"
 tokio = { version = "1.41", features = ["full"] }
 tokio-rustls = "0.26.0"
 toml = "0.8.19"
