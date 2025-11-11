@@ -53,7 +53,7 @@ To do so, set the `RUST_LOG` environment variable.
 Use ...
 
 ```sh
-RUST_LOG=proxy=trace cargo run
+RUST_LOG=imap_proxy=trace cargo run
 ```
 
 ... to start the proxy (using the default `config.toml`), enabling all log messages for the "proxy" module.
