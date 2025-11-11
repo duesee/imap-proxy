@@ -186,8 +186,8 @@ impl State for ConnectedState {}
 impl Proxy<ConnectedState> {
     pub async fn start_conversation(self) {
         let mut proxy_to_server = {
-            // TODO(#144): Read options from config
-            let options = client::Options::default();
+            let mut options = client::Options::default();
+            options.crlf_relaxed = true;
             Client::new(options)
         };
         let mut proxy_to_server_stream = self.state.proxy_to_server;
@@ -202,8 +202,8 @@ impl Proxy<ConnectedState> {
         util::filter_capabilities_in_greeting(&mut greeting);
 
         let mut client_to_proxy = {
-            // TODO(#144): Read options from config
             let mut options = server::Options::default();
+            options.crlf_relaxed = true;
             options
                 .set_literal_accept_text(LITERAL_ACCEPT_TEXT.to_string())
                 .unwrap();
