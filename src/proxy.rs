@@ -19,7 +19,7 @@ use tokio_rustls::{
     rustls::{pki_types::ServerName, ClientConfig, RootCertStore, ServerConfig},
     TlsAcceptor, TlsConnector,
 };
-use tracing::{error, info, trace};
+use tracing::{error, info, info_span, trace, Instrument};
 
 use crate::{
     config::{Bind, Connect, Identity, Service},
@@ -185,13 +185,19 @@ impl State for ConnectedState {}
 
 impl Proxy<ConnectedState> {
     pub async fn start_conversation(self) {
+        let client_span = info_span!("proxy", side = "client");
+        let server_span = info_span!("proxy", side = "server");
+
         let mut proxy_to_server = {
             let mut options = client::Options::default();
             options.crlf_relaxed = true;
             Client::new(options)
         };
         let mut proxy_to_server_stream = self.state.proxy_to_server;
-        let stream_event = proxy_to_server_stream.next(&mut proxy_to_server).await;
+        let stream_event = server_span
+            .in_scope(|| proxy_to_server_stream.next(&mut proxy_to_server))
+            .instrument(server_span.clone())
+            .await;
         let Some(server_event) = handle_stream_event("s2p", stream_event) else {
             return;
         };
@@ -216,13 +222,19 @@ impl Proxy<ConnectedState> {
 
         loop {
             tokio::select! {
-                stream_event = client_to_proxy_stream.next(&mut client_to_proxy) => {
+                stream_event = client_to_proxy_stream
+                    .next(&mut client_to_proxy)
+                    .instrument(client_span.clone()) =>
+                {
                     let Some(client_event) = handle_stream_event("c2p", stream_event) else {
                         break;
                     };
                     handle_client_event(client_event, &mut proxy_to_server)
                 }
-                stream_event = proxy_to_server_stream.next(&mut proxy_to_server) => {
+                stream_event = proxy_to_server_stream
+                    .next(&mut proxy_to_server)
+                    .instrument(server_span.clone()) =>
+                {
                     let Some(server_event) = handle_stream_event("s2p", stream_event) else {
                         break;
                     };

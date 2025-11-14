@@ -61,10 +61,16 @@ RUST_LOG=imap_proxy=trace cargo run
 You should probably experiment with the environment variable. For example, you can use ...
 
 ```sh
+RUST_LOG=imap_proxy=trace,imap_next=trace cargo run
+```
+
+... to enable additional logs for the "imap-next" module. This way, you will get IO and fragment events. And you can use ...
+
+```sh
 RUST_LOG=trace cargo run
 ```
 
-... to enable logs from lower libraries. This way, you will get TLS events and `io/{read,write}/raw` events.
+... to enable logs from all lower libraries. This way, you will get also TLS events.
 
 ```mermaid  
 graph LR;
