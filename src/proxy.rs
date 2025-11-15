@@ -185,8 +185,8 @@ impl State for ConnectedState {}
 
 impl Proxy<ConnectedState> {
     pub async fn start_conversation(self) {
-        let client_span = info_span!("proxy", side = "client");
-        let server_span = info_span!("proxy", side = "server");
+        let client_span = info_span!("proxy", with = "client");
+        let server_span = info_span!("proxy", with = "server");
 
         let mut proxy_to_server = {
             let mut options = client::Options::default();
