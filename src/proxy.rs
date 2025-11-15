@@ -312,8 +312,8 @@ fn handle_client_event(
     };
 
     match event {
-        server::Event::GreetingSent { .. } => {
-            trace!(role = "p2c", "<--- greeting");
+        server::Event::GreetingSent { greeting } => {
+            trace!(role = "p2c", ?greeting, "<---");
         }
         server::Event::ResponseSent { handle, .. } => {
             trace!(role = "p2c", ?handle, "<---");
