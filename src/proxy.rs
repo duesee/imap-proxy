@@ -194,8 +194,8 @@ impl Proxy<ConnectedState> {
             Client::new(options)
         };
         let mut proxy_to_server_stream = self.state.proxy_to_server;
-        let stream_event = server_span
-            .in_scope(|| proxy_to_server_stream.next(&mut proxy_to_server))
+        let stream_event = proxy_to_server_stream
+            .next(&mut proxy_to_server)
             .instrument(server_span.clone())
             .await;
         let Some(server_event) = handle_stream_event("s2p", stream_event) else {
